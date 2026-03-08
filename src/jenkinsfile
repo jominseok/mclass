@@ -1,30 +1,40 @@
-pipline{
-    agent any //모든 서버에서 실행 가능
+pipeline { // 오타 수정 (pipline -> pipeline)
+    agent any // Jenkins의 사용 가능한 모든 에이전트(노드)에서 실행 가능
 
-    tools{
-        maven 'maven 3.8.7'
-        // Jenkins에 등록 된 Maven 사용
+    tools {
+        maven 'maven 3.8.7' // Jenkins 'Global Tool Configuration'에 등록된 Maven 이름
     }
 
-    environment{
-        //변수 명 설정 
-        //배포에 필요한 변수 설정
-        DOCKER_IMAGE = "demo-app" //도커 이미지 이름
-        CONTAINER_NAME = "springboot-container"// 도커 컨테이너 이름
-        JAR_FILE_NAME = "app.jar" //복사할 JAR 파일 이름
-        PORT = "8081" //컨테이너와 연결할 포트
-        REMOTE_USER = "ubuntu" // 원격 인스턴스 서버 사용자
-        REMOTE_HOST = "54.252.148.88" // 원격 인스턴스IP
-        REMOTE_DIR = "/home/ubuntu/deploy"// 원격 서버에서 작업 할 경로
-        SSH_CREDENTIALS_ID - "939d2c9e-9974-4b24-a158-b1af50af48d8" //Jenkins ssh자격 증명 ID
+    environment {
+        // 배포에 필요한 환경 변수 설정
+        DOCKER_IMAGE = "demo-app" // 도커 이미지 이름
+        CONTAINER_NAME = "springboot-container" // 도커 컨테이너 이름
+        JAR_FILE_NAME = "app.jar" // 복사할 JAR 파일 이름
+        PORT = "8081" // 컨테이너와 연결할 호스트 포트
+        REMOTE_USER = "ubuntu" // 원격 인스턴스 서버 사용자명
+        REMOTE_HOST = "54.252.148.88" // 원격 인스턴스 IP
+        REMOTE_DIR = "/home/ubuntu/deploy" // 원격 서버에서 작업할 경로
+        SSH_CREDENTIALS_ID = "939d2c9e-9974-4b24-a158-b1af50af48d8" // 문법 수정 (- 를 = 로 변경)
     }
 
-    //여러단계룰 그룹화
-    stages{
-        ///step : stage 안에서 실행할 실제 명령어
-        steps('Git checkout'){
-            //jenkins가 연결도니 git 저장소에서 최신 코드 체크아웃
-            checkout scm
+    // 파이프라인의 여러 단계를 그룹화
+    stages {
+        
+        // stage: 전체 프로세스 중 하나의 큰 단계
+        stage('Git checkout') {
+            // steps: stage 안에서 실행될 실제 작업 명령어들
+            steps {
+                // Jenkins가 연결된 Git 저장소에서 최신 코드 체크아웃
+                checkout scm
+            }
         }
-    }
-}
+
+        stage('Maven Build') { // 오타 수정 (Bulid -> Build)
+            steps {
+                // Maven을 사용하여 프로젝트 빌드 (이전 단계의 주석이 복사된 것 수정)
+                // 테스트는 건너뛰고 패키징 수행 (리눅스 쉘 명령어 실행)
+                sh 'mvn clean package -DskipTests'
+            }
+        }
+    } // stages 닫는 괄호 추가
+} // pipeline 닫는 괄호 추가
