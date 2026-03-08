@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>오늘 저녁 콜? ⚾</title>
+    <title>오빠 지갑 털기 대작전 💸</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
     
     <style>
         body {
@@ -14,80 +14,88 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #f0f4f8;
-            font-family: 'Noto Sans KR', sans-serif;
+            /* 여동생들이 좋아할 만한 힙한 파스텔 그라데이션 */
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            font-family: 'Jua', sans-serif;
             overflow: hidden;
         }
 
         .card {
-            background: white;
-            padding: 50px 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 40px 30px;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             text-align: center;
             z-index: 10;
+            width: 90%;
+            max-width: 400px;
         }
 
         h1 {
-            font-size: 2rem;
-            color: #2c3e50;
-            margin-bottom: 10px;
+            font-size: 2.2rem;
+            color: #ff6b6b;
+            margin-bottom: 5px;
         }
 
         p {
             font-size: 1.2rem;
-            color: #7f8c8d;
-            margin-bottom: 40px;
+            color: #576574;
+            margin-bottom: 30px;
         }
 
-        .btn-group {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            height: 50px;
-            align-items: center;
-        }
-
-        button {
-            font-size: 1.2rem;
-            font-weight: 700;
-            padding: 12px 30px;
+        #btn-money {
+            font-family: 'Jua', sans-serif;
+            font-size: 1.4rem;
+            padding: 15px 30px;
+            background-color: #feca57;
+            color: #222f3e;
             border: none;
-            border-radius: 30px;
+            border-radius: 50px;
             cursor: pointer;
-        }
-
-        #btn-yes {
-            background-color: #0984e3;
-            color: white;
-            box-shadow: 0 4px 15px rgba(9, 132, 227, 0.3);
-            transition: transform 0.2s;
-        }
-
-        #btn-yes:hover {
-            transform: scale(1.1);
-        }
-
-        #btn-no {
-            background-color: #dfe6e9;
-            color: #636e72;
-            /* transform을 사용하면 프레임 드랍 없이 아주 부드럽게 이동합니다 */
-            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 8px 20px rgba(254, 202, 87, 0.4);
+            /* 스무스하게 미끄러지는 애니메이션 */
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s;
             position: relative;
             z-index: 100;
         }
 
-        #success-msg {
-            display: none;
-            font-size: 1.5rem;
-            color: #00b894;
-            font-weight: bold;
-            margin-top: 20px;
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        #btn-money:hover {
+            box-shadow: 0 10px 25px rgba(254, 202, 87, 0.6);
         }
 
-        @keyframes popIn {
-            0% { transform: scale(0.5); opacity: 0; }
+        #success-msg {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            animation: bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #success-msg h2 {
+            color: #10ac84;
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        #success-msg p {
+            font-size: 1.3rem;
+            color: #222f3e;
+            margin: 0;
+        }
+
+        .account-box {
+            background: #f1f2f6;
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px dashed #ff9f43;
+            color: #ff9f43;
+            font-weight: bold;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); opacity: 1; }
             100% { transform: scale(1); opacity: 1; }
         }
     </style>
@@ -95,39 +103,61 @@
 <body>
 
     <div class="card" id="main-card">
-        <h1 id="main-title">오늘 저녁에 야구 볼까? ⚾</h1>
-        <p id="subtitle">분위기 좋은 펍에서 치맥 콜? 🍗🍻</p>
+        <h1 id="title">고2병엔 금융치료지 💊</h1>
+        <p id="subtitle">움직이는 용돈을 잡으면 진짜 쏜다!</p>
         
-        <div class="btn-group" id="buttons">
-            <button id="btn-yes" onclick="sayYes()">콜! 좋아 💖</button>
-            <button id="btn-no" onmouseover="runAway()" onclick="runAway()">안돼 🙅‍♀️</button>
-        </div>
+        <button id="btn-money" onmouseover="dodgeMoney()" onclick="catchMoney()">💳 만원 획득하기!</button>
 
-        <div id="success-msg">나이스! 이따 봐요 🥰</div>
+        <div id="success-msg">
+            <h2>🎉 검거 완료!</h2>
+            <p>오? 이걸 잡네 ㅋㅋㅋㅋ<br>고생하는 고딩 구제해준다.</p>
+            <div class="account-box">
+                스크린샷 찍어서 오빠한테<br>카톡으로 계좌번호 보내기!<br>(※ 10분 내로 안 보내면 무효)
+            </div>
+        </div>
     </div>
 
     <script>
-        function runAway() {
-            const btn = document.getElementById('btn-no');
+        let dodgeCount = 0;
+        const maxDodges = 7; // 7번 도망가면 지쳐서 멈춤
+
+        function dodgeMoney() {
+            const btn = document.getElementById('btn-money');
             
-            // 화면 크기를 기준으로 이동할 랜덤 거리 계산 (너무 멀리 안가게 80% 반경 내에서)
-            const windowWidth = window.innerWidth * 0.8;
-            const windowHeight = window.innerHeight * 0.8;
+            // 7번 도망가면 버튼이 멈추고 텍스트가 바뀜
+            if (dodgeCount >= maxDodges) {
+                btn.innerText = "휴.. 💦 지쳤다. 그냥 줄게 눌러라";
+                btn.style.backgroundColor = "#ff9ff3";
+                btn.style.transform = "translate(0px, 0px)"; // 원래 자리로
+                return; // 더 이상 도망가지 않음
+            }
+
+            dodgeCount++;
+
+            // 버튼 내용이 도망갈 때마다 얄밉게 바뀜
+            const teasingWords = [
+                "어림없지! 😜", "느려~ 🐢", "잡아보시지! 👅", 
+                "까비~ ㅋ", "오빠 지갑은 튼튼하다 🛡️", "공부나 해라 📚"
+            ];
+            btn.innerText = teasingWords[Math.floor(Math.random() * teasingWords.length)];
+
+            // 화면 크기 비례해서 도망갈 거리 계산
+            const windowWidth = window.innerWidth * 0.7;
+            const windowHeight = window.innerHeight * 0.7;
             
-            // 현재 위치에서 상하좌우 랜덤하게 이동
             const randomX = (Math.random() - 0.5) * windowWidth;
             const randomY = (Math.random() - 0.5) * windowHeight;
             
-            // transform: translate를 사용해 아주 스무스하게 미끄러지듯 이동
             btn.style.transform = `translate(${randomX}px, ${randomY}px)`;
         }
 
-        function sayYes() {
-            document.getElementById('buttons').style.display = 'none';
+        function catchMoney() {
+            // 버튼을 성공적으로 눌렀을 때
+            document.getElementById('btn-money').style.display = 'none';
+            document.getElementById('title').style.display = 'none';
             document.getElementById('subtitle').style.display = 'none';
-            // 성공 시 펍 관련 멘트로 변경!
-            document.getElementById('main-title').innerText = "분위기 좋은 펍 예약 완료! 🍻";
-            document.getElementById('success-msg').style.display = 'block';
+            
+            document.getElementById('success-msg').style.display = 'flex';
         }
     </script>
 
