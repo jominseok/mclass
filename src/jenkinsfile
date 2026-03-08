@@ -1,0 +1,27 @@
+pipline{
+    agent any //모든 서버에서 실행 가능
+
+    tools{
+        maven 'maven 3.8.7'
+        // Jenkins에 등록 된 Maven 사용
+    }
+
+    environment{
+        //변수 명 설정 
+        //배포에 필요한 변수 설정
+        DOCKER_IMAGE = "demo-app" //도커 이미지 이름
+        CONTAINER_NAME = "springboot-container"// 도커 컨테이너 이름
+        JAR_FILE_NAME = "app.jar" //복사할 JAR 파일 이름
+        PORT = "8081" //컨테이너와 연결할 포트
+        REMOTE_USER = "ubuntu" // 원격 인스턴스 서버 사용자
+        REMOTE_HOST = "54.252.148.88" // 원격 인스턴스IP
+        REMOTE_DIR = "/home/ubuntu/deploy"// 원격 서버에서 작업 할 경로
+        SSH_CREDENTIALS_ID - "939d2c9e-9974-4b24-a158-b1af50af48d8" //Jenkins ssh자격 증명 ID
+    }
+
+    //여러단계룰 그룹화
+    stages('Git checkout'){///step : stage 안에서 실행할 실제 명령어
+        //jenkins가 연결도니 git 저장소에서 최신 코드 체크아웃
+        checkout scm
+    }
+}
