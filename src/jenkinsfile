@@ -20,8 +20,11 @@ pipline{
     }
 
     //여러단계룰 그룹화
-    stages('Git checkout'){///step : stage 안에서 실행할 실제 명령어
+    stages{
+        ///step : stage 안에서 실행할 실제 명령어
+        steps('Git checkout'){
         //jenkins가 연결도니 git 저장소에서 최신 코드 체크아웃
         checkout scm
+        }
     }
 }
