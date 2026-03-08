@@ -3,213 +3,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>오빠 지갑 광클 챌린지 💸</title>
-    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <title>2026학년도 오빠영역 모의고사</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
-            height: 100vh;
+            background-color: #f0f0f0;
             display: flex;
             justify-content: center;
-            align-items: center;
-            /* 스트레스 확 풀리는 팝한 컬러 */
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
-            font-family: 'Jua', sans-serif;
-            overflow: hidden;
+            font-family: 'Nanum Myeongjo', serif; /* 모의고사 감성 */
+            color: #222;
+        }
+
+        .paper {
+            background-color: white;
+            width: 100%;
+            max-width: 600px;
+            min-height: 100vh;
+            padding: 30px 20px;
+            box-sizing: border-box;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
             text-align: center;
-            user-select: none; /* 광클할 때 글씨 드래그 방지 */
-            -webkit-user-select: none;
+            border-bottom: 3px solid #000;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
         }
 
-        .game-card {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 40px 20px;
-            border-radius: 30px;
-            box-shadow: 0 15px 35px rgba(255, 107, 107, 0.2);
-            width: 90%;
-            max-width: 400px;
-            position: relative;
+        .header h1 {
+            font-size: 1.5rem;
+            margin: 0 0 10px 0;
+            letter-spacing: -1px;
         }
 
-        h1 {
-            color: #ff4757;
-            margin-bottom: 5px;
-            font-size: 2.2rem;
-        }
-
-        p.desc {
-            color: #57606f;
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-        }
-
-        .status-board {
+        .header .sub {
             display: flex;
             justify-content: space-between;
-            background: #f1f2f6;
-            padding: 15px 20px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            font-size: 1.5rem;
-            color: #2f3542;
+            font-size: 0.9rem;
             font-weight: bold;
         }
 
-        #timer { color: #ff4757; }
-        #score { color: #1e90ff; }
+        .question-block {
+            margin-bottom: 40px;
+        }
 
-        /* 광클할 지갑 버튼 */
-        .wallet-btn {
-            font-size: 5rem;
-            background: none;
-            border: none;
+        .question {
+            font-size: 1.1rem;
+            font-weight: bold;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            word-break: keep-all;
+        }
+
+        .options {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .options li {
+            margin-bottom: 12px;
+            font-size: 1.05rem;
             cursor: pointer;
-            transition: transform 0.05s;
-            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));
-            -webkit-tap-highlight-color: transparent; /* 모바일 터치 시 파란 배경 방지 */
+            padding: 8px;
+            border-radius: 5px;
+            transition: background 0.2s;
         }
 
-        .wallet-btn:active {
-            transform: scale(0.85); /* 누를 때마다 쫀득하게 줄어듦 */
+        .options li:hover, .options li:active {
+            background-color: #f5f5f5;
         }
 
-        /* 덜덜 떨리는 애니메이션 (광클 시) */
-        .shake {
-            animation: shake 0.1s infinite;
+        .options span.num {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            border: 1px solid #222;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 23px;
+            margin-right: 10px;
+            font-size: 0.9rem;
         }
 
-        @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            10% { transform: translate(-1px, -2px) rotate(-1deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            30% { transform: translate(3px, 2px) rotate(0deg); }
-            40% { transform: translate(1px, -1px) rotate(1deg); }
-            50% { transform: translate(-1px, 2px) rotate(-1deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            70% { transform: translate(3px, 1px) rotate(-1deg); }
-            80% { transform: translate(-1px, -1px) rotate(1deg); }
-            90% { transform: translate(1px, 2px) rotate(0deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        .submit-btn {
+            display: none;
+            width: 100%;
+            padding: 15px;
+            background-color: #222;
+            color: white;
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
         }
 
-        /* 결과창 (처음엔 숨김) */
+        /* 결과창 오버레이 */
         #result-modal {
             display: none;
-            position: absolute;
+            position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.95);
-            border-radius: 30px;
-            flex-direction: column;
+            background: rgba(0,0,0,0.8);
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            box-sizing: border-box;
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 10;
+            z-index: 100;
         }
 
-        #result-title {
-            font-size: 2rem;
-            margin-bottom: 10px;
+        .result-content {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 80%;
         }
 
-        #result-msg {
-            font-size: 1.3rem;
-            color: #2f3542;
-            line-height: 1.6;
-            margin-bottom: 20px;
+        .result-content h2 {
+            color: #e74c3c;
+            font-size: 3rem;
+            margin: 0 0 10px 0;
         }
 
-        .restart-btn {
-            font-family: 'Jua', sans-serif;
+        .result-content p {
             font-size: 1.2rem;
-            padding: 10px 25px;
-            background-color: #ff4757;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            font-family: sans-serif;
         }
 
-        @keyframes popIn {
-            0% { transform: scale(0.8); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+        /* 채점 동그라미 이미지 (CSS로 그림) */
+        .correct-mark {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border: 5px solid rgba(231, 76, 60, 0.7);
+            border-radius: 50%;
+            top: -20px;
+            left: -10px;
+            pointer-events: none;
+            display: none;
         }
+
     </style>
 </head>
 <body>
 
-    <div class="game-card">
-        <h1>지갑 털기 광클 챌린지 💳</h1>
-        <p class="desc">야자 스트레스? 지갑을 미친듯이 눌러라!<br><b>제한시간 5초!</b> 첫 클릭 시 시작됨 ㅋ</p>
-
-        <div class="status-board">
-            <div>⏱ <span id="timer">5.0</span>초</div>
-            <div>🔥 <span id="score">0</span>타</div>
+    <div class="paper">
+        <div class="header">
+            <h1>2026학년도 고2 야간자율학습 특별평가</h1>
+            <div class="sub">
+                <span>제 1 교시</span>
+                <span style="font-size: 1.3rem;">오빠 영역</span>
+                <span>성명 : 내동생</span>
+            </div>
         </div>
 
-        <button class="wallet-btn" id="wallet" onclick="hitWallet()">👛</button>
+        <div class="question-block" id="q1-block">
+            <div class="correct-mark" id="mark1"></div>
+            <div class="question">1. 다음 중 오빠가 동생을 생각하며 평소에 느끼는 감정으로 가장 알맞은 것을 고르시오. [3점]</div>
+            <ul class="options">
+                <li onclick="checkAnswer(1, 1)"><span class="num">①</span> 아휴 저 웬수</li>
+                <li onclick="checkAnswer(1, 2)"><span class="num">②</span> 내 지갑 루팡 (용돈 먹는 하마)</li>
+                <li onclick="checkAnswer(1, 3)"><span class="num">③</span> 맨날 누워서 폰만 하는 고딩</li>
+                <li onclick="checkAnswer(1, 4)"><span class="num">④</span> 10살 차이나는 내 눈엔 제일 예쁘고 귀여운 막내</li>
+            </ul>
+        </div>
 
-        <div id="result-modal">
-            <div id="result-title">결과</div>
-            <div id="result-msg">메시지</div>
-            <p style="color:#ff4757; font-size:1rem;">(이 화면 캡처해서 오빠한테 카톡 ㄱㄱ)</p>
-            <button class="restart-btn" onclick="resetGame()">다시 도전 ㅋ</button>
+        <div class="question-block" id="q2-block" style="display:none;">
+            <div class="correct-mark" id="mark2"></div>
+            <div class="question">2. 야자가 끝나고 지쳐서 하교하는 동생을 위해 오빠가 준비해야 할 가장 적절한 조치는? [4점]</div>
+            <ul class="options">
+                <li onclick="checkAnswer(2, 1)"><span class="num">①</span> "수고했다" (영혼 없는 카톡 1개)</li>
+                <li onclick="checkAnswer(2, 2)"><span class="num">②</span> 마라탕 결제해주기</li>
+                <li onclick="checkAnswer(2, 3)"><span class="num">③</span> 달달한 디저트 사먹으라고 용돈 보내기</li>
+                <li onclick="checkAnswer(2, 4)"><span class="num">④</span> ②번과 ③번 둘 다</li>
+            </ul>
+        </div>
+
+        <div class="question-block" id="q3-block" style="display:none;">
+            <div class="correct-mark" id="mark3"></div>
+            <div class="question">3. 위 조치(선물)를 받은 동생이 오빠에게 보낼 카톡 답장으로 가장 바람직한 것은? [3점]</div>
+            <ul class="options">
+                <li onclick="checkAnswer(3, 1)"><span class="num">①</span> 오 (단답)</li>
+                <li onclick="checkAnswer(3, 2)"><span class="num">②</span> ㅇㅋ 잘먹음</li>
+                <li onclick="checkAnswer(3, 3)"><span class="num">③</span> 읽고 씹기 (이모티콘 하나 띡)</li>
+                <li onclick="checkAnswer(3, 4)"><span class="num">④</span> 오빠 진짜 최고야 ㅠㅠ 완전 사랑해 고마워!! ♡♡</li>
+            </ul>
+        </div>
+
+        <button class="submit-btn" id="submit-btn" onclick="showResult()">답안지 제출 및 채점하기</button>
+    </div>
+
+    <div id="result-modal">
+        <div class="result-content">
+            <h2>💯 100점!</h2>
+            <p><strong>[오빠 영역] 1등급 컷 통과!</strong><br><br>
+               야자하느라 고생 많았다 ㅋㅋㅋ<br>
+               이 화면 캡처해서 오빠한테 보내면<br>
+               오빠 카드가 바로 발동됩니다 💳✨<br>
+               (먹고 싶은 거 톡으로 남겨라!)
+            </p>
         </div>
     </div>
 
     <script>
-        const timerEl = document.getElementById('timer');
-        const scoreEl = document.getElementById('score');
-        const walletBtn = document.getElementById('wallet');
-        const resultModal = document.getElementById('result-modal');
-        const resultTitle = document.getElementById('result-title');
-        const resultMsg = document.getElementById('result-msg');
+        let solved = { 1: false, 2: false, 3: false };
 
-        let score = 0;
-        let timeLeft = 5.0;
-        let isPlaying = false;
-        let isEnded = false;
-        let timerId;
+        function checkAnswer(qNum, selected) {
+            if (solved[qNum]) return; // 이미 풀었으면 무시
 
-        function hitWallet() {
-            if (isEnded) return;
-
-            // 첫 번째 클릭 시 게임 시작
-            if (!isPlaying) {
-                isPlaying = true;
-                startGame();
+            if (selected !== 4) {
+                // 오답을 고를 경우 오빠의 장난스러운 멘트 ㅋㅋㅋ
+                let msgs = [
+                    "야 ㅋㅋㅋㅋ 솔직히 맞는 말이긴 한데, 정답은 아니지. 다시 골라라.",
+                    "어허! 오빠의 넓은 마음을 이렇게 모르나? 다시 골라봐 ㅡㅡ",
+                    "양심이 있으면 그건 누르면 안 되지 ㅋㅋㅋㅋ 다시!"
+                ];
+                alert(msgs[Math.floor(Math.random() * msgs.length)]);
+                return;
             }
 
-            score++;
-            scoreEl.innerText = score;
-
-            // 누를 때마다 지갑이 덜덜 떨리는 효과
-            walletBtn.classList.add('shake');
-            setTimeout(() => {
-                walletBtn.classList.remove('shake');
-            }, 50);
-        }
-
-        function startGame() {
-            timerId = setInterval(() => {
-                timeLeft -= 0.1;
-                timerEl.innerText = timeLeft.toFixed(1);
-
-                if (timeLeft <= 0) {
-                    endGame();
-                }
-            }, 100);
-        }
-
-        function endGame() {
-            clearInterval(timerId);
-            isPlaying = false;
-            isEnded = true;
-            timerEl.innerText = "0.0";
+            // 정답(4번)을 고른 경우
+            solved[qNum] = true;
             
-            // 점수에 따른 남매 츤데레 결과 판정
-            if (score >= 60) {
-                resultTitle.innerText = "🏆 미친 피지컬 ㄷㄷ";
-                resultTitle.style.color = "#ff4757";
-                resultMsg.innerHTML = "손가락 모터 달았냐? ㅋㅋㅋㅋ<br>인정한다. 마라탕에 꿔바로우 세트 쏜다!<br>고생했다 울 동생 🥰
+            // 빨간펜 채점 동그라미 표시
+            document.getElementById('mark' + qNum).style.display = 'block';
+
+            // 다음 문제 보여주기
+            if (qNum === 1) {
+                setTimeout(() => { document.getElementById('q2-block').style.display = 'block'; }, 500);
+            } else if (qNum === 2) {
+                setTimeout(() => { document.getElementById('q3-block').style.display = 'block'; }, 500);
+            } else if (qNum === 3) {
+                setTimeout(() => { document.getElementById('submit-btn').style.display = 'block'; }, 500);
+            }
+        }
+
+        function showResult() {
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+    </script>
+
+</body>
+</html>
