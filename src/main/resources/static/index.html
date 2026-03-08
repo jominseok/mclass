@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>오빠 지갑 털기 대작전 💳</title>
+    <title>오빠 지갑 광클 챌린지 💸</title>
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
     <style>
         body {
@@ -12,130 +12,127 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+            /* 스트레스 확 풀리는 팝한 컬러 */
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
             font-family: 'Jua', sans-serif;
             overflow: hidden;
             text-align: center;
+            user-select: none; /* 광클할 때 글씨 드래그 방지 */
+            -webkit-user-select: none;
         }
 
         .game-card {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             padding: 40px 20px;
-            border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(255, 107, 107, 0.2);
             width: 90%;
             max-width: 400px;
+            position: relative;
         }
 
         h1 {
-            color: #5f2c82;
+            color: #ff4757;
             margin-bottom: 5px;
             font-size: 2.2rem;
         }
 
         p.desc {
-            color: #666;
+            color: #57606f;
             font-size: 1.2rem;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
-        /* 게이지 바 스타일 */
-        .gauge-container {
-            width: 100%;
-            height: 40px;
-            background-color: #ddd;
-            border-radius: 20px;
-            position: relative;
-            margin-bottom: 30px;
-            overflow: hidden;
-            box-shadow: inset 0 3px 6px rgba(0,0,0,0.1);
-        }
-
-        /* 대박 존 (가운데) */
-        .golden-zone {
-            position: absolute;
-            left: 40%;
-            width: 20%;
-            height: 100%;
-            background-color: #ff9a9e;
-            z-index: 1;
-        }
-
-        /* 중박 존 (가운데 양옆) */
-        .silver-zone {
-            position: absolute;
-            left: 20%;
-            width: 60%;
-            height: 100%;
-            background-color: #fecfef;
-            z-index: 0;
-        }
-
-        /* 왔다 갔다 하는 커서 */
-        .cursor {
-            position: absolute;
-            top: -5px;
-            left: 0;
-            width: 10px;
-            height: 50px;
-            background-color: #5f2c82;
-            border-radius: 5px;
-            z-index: 2;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
-        }
-
-        .stop-btn {
-            font-family: 'Jua', sans-serif;
-            font-size: 1.5rem;
-            padding: 15px 40px;
-            background-color: #4facfe;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: transform 0.2s, background-color 0.2s;
-            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
-        }
-
-        .stop-btn:active {
-            transform: scale(0.95);
-        }
-
-        #result-box {
-            display: none;
-            margin-top: 25px;
-            padding: 20px;
-            background: #fff;
-            border: 2px dashed #ff9a9e;
+        .status-board {
+            display: flex;
+            justify-content: space-between;
+            background: #f1f2f6;
+            padding: 15px 20px;
             border-radius: 15px;
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-bottom: 30px;
+            font-size: 1.5rem;
+            color: #2f3542;
+            font-weight: bold;
+        }
+
+        #timer { color: #ff4757; }
+        #score { color: #1e90ff; }
+
+        /* 광클할 지갑 버튼 */
+        .wallet-btn {
+            font-size: 5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.05s;
+            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));
+            -webkit-tap-highlight-color: transparent; /* 모바일 터치 시 파란 배경 방지 */
+        }
+
+        .wallet-btn:active {
+            transform: scale(0.85); /* 누를 때마다 쫀득하게 줄어듦 */
+        }
+
+        /* 덜덜 떨리는 애니메이션 (광클 시) */
+        .shake {
+            animation: shake 0.1s infinite;
+        }
+
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        /* 결과창 (처음엔 숨김) */
+        #result-modal {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.95);
+            border-radius: 30px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
         }
 
         #result-title {
-            font-size: 1.8rem;
-            color: #ff6b6b;
+            font-size: 2rem;
             margin-bottom: 10px;
         }
 
         #result-msg {
-            font-size: 1.2rem;
-            color: #333;
-            line-height: 1.5;
+            font-size: 1.3rem;
+            color: #2f3542;
+            line-height: 1.6;
+            margin-bottom: 20px;
         }
 
-        .reset-btn {
-            margin-top: 15px;
+        .restart-btn {
             font-family: 'Jua', sans-serif;
-            font-size: 1.1rem;
-            padding: 8px 20px;
-            background-color: #eee;
+            font-size: 1.2rem;
+            padding: 10px 25px;
+            background-color: #ff4757;
+            color: white;
             border: none;
-            border-radius: 20px;
+            border-radius: 50px;
             cursor: pointer;
         }
 
         @keyframes popIn {
-            0% { transform: scale(0.5); opacity: 0; }
+            0% { transform: scale(0.8); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
     </style>
@@ -143,89 +140,76 @@
 <body>
 
     <div class="game-card">
-        <h1>오빠 카드 찬스! 💳</h1>
-        <p class="desc">야자하느라 고생하는 고딩!<br>타이밍 맞춰서 오빠 지갑을 털어봐 😎</p>
+        <h1>지갑 털기 광클 챌린지 💳</h1>
+        <p class="desc">야자 스트레스? 지갑을 미친듯이 눌러라!<br><b>제한시간 5초!</b> 첫 클릭 시 시작됨 ㅋ</p>
 
-        <div class="gauge-container">
-            <div class="silver-zone"></div>
-            <div class="golden-zone"></div>
-            <div class="cursor" id="cursor"></div>
+        <div class="status-board">
+            <div>⏱ <span id="timer">5.0</span>초</div>
+            <div>🔥 <span id="score">0</span>타</div>
         </div>
 
-        <button class="stop-btn" id="action-btn" onclick="stopCursor()">여기다! 멈춰!</button>
+        <button class="wallet-btn" id="wallet" onclick="hitWallet()">👛</button>
 
-        <div id="result-box">
+        <div id="result-modal">
             <div id="result-title">결과</div>
             <div id="result-msg">메시지</div>
-            <button class="reset-btn" onclick="resetGame()">다시 도전 ㅋ</button>
+            <p style="color:#ff4757; font-size:1rem;">(이 화면 캡처해서 오빠한테 카톡 ㄱㄱ)</p>
+            <button class="restart-btn" onclick="resetGame()">다시 도전 ㅋ</button>
         </div>
     </div>
 
     <script>
-        const cursor = document.getElementById('cursor');
-        const actionBtn = document.getElementById('action-btn');
-        const resultBox = document.getElementById('result-box');
+        const timerEl = document.getElementById('timer');
+        const scoreEl = document.getElementById('score');
+        const walletBtn = document.getElementById('wallet');
+        const resultModal = document.getElementById('result-modal');
         const resultTitle = document.getElementById('result-title');
         const resultMsg = document.getElementById('result-msg');
 
-        let position = 0;
-        let direction = 1;
-        let speed = 2.5; // 속도 (숫자가 클수록 빠름)
-        let animationId;
-        let isRunning = true;
+        let score = 0;
+        let timeLeft = 5.0;
+        let isPlaying = false;
+        let isEnded = false;
+        let timerId;
 
-        function moveCursor() {
-            if (!isRunning) return;
+        function hitWallet() {
+            if (isEnded) return;
 
-            position += direction * speed;
-            
-            // 양끝에 닿으면 방향 전환
-            if (position >= 96 || position <= 0) {
-                direction *= -1;
+            // 첫 번째 클릭 시 게임 시작
+            if (!isPlaying) {
+                isPlaying = true;
+                startGame();
             }
 
-            cursor.style.left = position + '%';
-            animationId = requestAnimationFrame(moveCursor);
+            score++;
+            scoreEl.innerText = score;
+
+            // 누를 때마다 지갑이 덜덜 떨리는 효과
+            walletBtn.classList.add('shake');
+            setTimeout(() => {
+                walletBtn.classList.remove('shake');
+            }, 50);
         }
 
-        // 게임 시작
-        moveCursor();
+        function startGame() {
+            timerId = setInterval(() => {
+                timeLeft -= 0.1;
+                timerEl.innerText = timeLeft.toFixed(1);
 
-        function stopCursor() {
-            if (!isRunning) return;
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 100);
+        }
+
+        function endGame() {
+            clearInterval(timerId);
+            isPlaying = false;
+            isEnded = true;
+            timerEl.innerText = "0.0";
             
-            isRunning = false;
-            cancelAnimationFrame(animationId);
-            actionBtn.style.display = 'none';
-
-            // 결과 판정 (가운데 40~60%가 대박존, 20~80%가 중박존)
-            if (position >= 40 && position <= 60) {
-                resultTitle.innerText = "🎉 대박 당첨!!";
-                resultTitle.style.color = "#ff6b6b";
-                resultMsg.innerHTML = "오? 타이밍 미쳤고 ㅋㅋㅋ<br>마라탕에 탕후루 풀코스로 쏜다!!<br>먹고 싶은 거 톡으로 보내라 🥰";
-            } else if (position >= 20 && position <= 80) {
-                resultTitle.innerText = "✨ 평타 쳤다!";
-                resultTitle.style.color = "#4facfe";
-                resultMsg.innerHTML = "까비~ 그래도 이 정도면 봐준다.<br>편의점 가서 떡볶이랑 과자 골라라!<br>야자 파이팅하고 💪";
-            } else {
-                resultTitle.innerText = "💥 꽝 ㅋㅋㅋㅋ";
-                resultTitle.style.color = "#5f2c82";
-                resultMsg.innerHTML = "아이고 느려 터졌네 ㅋㅋㅋ 으이구!<br>오빠 지갑은 안전하다 휴~<br>...는 장난이고 아이스크림은 사줄게 🍦";
-            }
-
-            resultBox.style.display = 'block';
-        }
-
-        function resetGame() {
-            isRunning = true;
-            resultBox.style.display = 'none';
-            actionBtn.style.display = 'inline-block';
-            position = 0;
-            direction = 1;
-            // 다시 할 때마다 아주 살짝씩 빨라지게 장난치기
-            speed = Math.min(speed + 0.5, 6); 
-            moveCursor();
-        }
-    </script>
-</body>
-</html>
+            // 점수에 따른 남매 츤데레 결과 판정
+            if (score >= 60) {
+                resultTitle.innerText = "🏆 미친 피지컬 ㄷㄷ";
+                resultTitle.style.color = "#ff4757";
+                resultMsg.innerHTML = "손가락 모터 달았냐? ㅋㅋㅋㅋ<br>인정한다. 마라탕에 꿔바로우 세트 쏜다!<br>고생했다 울 동생 🥰
