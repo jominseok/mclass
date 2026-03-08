@@ -29,12 +29,26 @@ pipeline { // 오타 수정 (pipline -> pipeline)
             }
         }
 
-        stage('Maven Build') { // 오타 수정 (Bulid -> Build)
+        stage('Maven Build') {
             steps {
                 // Maven을 사용하여 프로젝트 빌드 (이전 단계의 주석이 복사된 것 수정)
                 // 테스트는 건너뛰고 패키징 수행 (리눅스 쉘 명령어 실행)
                 sh 'mvn clean package -DskipTests'
             }
         }
+        stage('Prepare Jar') {
+            steps {
+                sh 'cp target/demo-0.0.1-SNAPSHOT.jar ${JAR_FILE_NAME}'
+            }
+        }
+        stage('Copy to Remote Server') {
+            steps {
+                sshagent (credentials: [env.SSH_CREDENTIALS_ID]){
+                    sh "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${REMOTE_USER}@${REMOTE_HOST} \"mkdir -p ${REMOTE_DIR}\""
+                    sh "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${JAR_FILE_NAME} Dockerfile ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/"
+                }
+            }
+        }
+
     } // stages 닫는 괄호 추가
 } // pipeline 닫는 괄호 추가

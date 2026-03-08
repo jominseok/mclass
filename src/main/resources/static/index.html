@@ -3,312 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>타이밍 야구 게임</title>
+    <title>오빠 지갑 털기 대작전 💳</title>
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
-            padding: 0;
             height: 100vh;
-            background-color: #222;
             display: flex;
             justify-content: center;
             align-items: center;
+            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
             font-family: 'Jua', sans-serif;
             overflow: hidden;
+            text-align: center;
         }
 
-        #game-container {
-            position: relative;
+        .game-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px 20px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        h1 {
+            color: #5f2c82;
+            margin-bottom: 5px;
+            font-size: 2.2rem;
+        }
+
+        p.desc {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        /* 게이지 바 스타일 */
+        .gauge-container {
             width: 100%;
-            max-width: 500px;
-            height: 800px;
-            /* 야구장 배경 이미지 */
-            background-image: url('https://images.unsplash.com/photo-1508344928928-7137b29de682?q=80&w=1000&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
+            height: 40px;
+            background-color: #ddd;
+            border-radius: 20px;
+            position: relative;
+            margin-bottom: 30px;
             overflow: hidden;
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.1);
+        }
+
+        /* 대박 존 (가운데) */
+        .golden-zone {
+            position: absolute;
+            left: 40%;
+            width: 20%;
+            height: 100%;
+            background-color: #ff9a9e;
+            z-index: 1;
+        }
+
+        /* 중박 존 (가운데 양옆) */
+        .silver-zone {
+            position: absolute;
+            left: 20%;
+            width: 60%;
+            height: 100%;
+            background-color: #fecfef;
+            z-index: 0;
+        }
+
+        /* 왔다 갔다 하는 커서 */
+        .cursor {
+            position: absolute;
+            top: -5px;
+            left: 0;
+            width: 10px;
+            height: 50px;
+            background-color: #5f2c82;
+            border-radius: 5px;
+            z-index: 2;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        .stop-btn {
+            font-family: 'Jua', sans-serif;
+            font-size: 1.5rem;
+            padding: 15px 40px;
+            background-color: #4facfe;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .stop-btn:active {
+            transform: scale(0.95);
+        }
+
+        #result-box {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            background: #fff;
+            border: 2px dashed #ff9a9e;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #result-title {
+            font-size: 1.8rem;
+            color: #ff6b6b;
+            margin-bottom: 10px;
+        }
+
+        #result-msg {
+            font-size: 1.2rem;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .reset-btn {
+            margin-top: 15px;
+            font-family: 'Jua', sans-serif;
+            font-size: 1.1rem;
+            padding: 8px 20px;
+            background-color: #eee;
+            border: none;
+            border-radius: 20px;
             cursor: pointer;
         }
 
-        /* 어두운 오버레이로 글씨 가독성 확보 */
-        #overlay {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.4);
-            pointer-events: none;
-        }
-
-        #scoreboard {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            color: white;
-            font-size: 24px;
-            text-shadow: 2px 2px 4px #000;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        #message-board {
-            position: absolute;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #FFD700;
-            font-size: 50px;
-            text-align: center;
-            text-shadow: 3px 3px 6px #000, 0 0 20px rgba(255, 215, 0, 0.8);
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-            z-index: 20;
-        }
-
-        /* 타격 존 (스트라이크 존) */
-        #sweet-spot {
-            position: absolute;
-            bottom: 15%;
-            left: 10%;
-            width: 80%;
-            height: 10%;
-            border: 3px dashed rgba(255, 255, 255, 0.7);
-            background-color: rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            pointer-events: none;
-            z-index: 5;
-        }
-
-        /* 야구공 */
-        #ball {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            background-image: url('https://upload.wikimedia.org/wikipedia/commons/1/1e/Baseball_%28crop%29.jpg');
-            background-size: cover;
-            border-radius: 50%;
-            box-shadow: -2px -2px 10px rgba(0,0,0,0.5) inset;
-            display: none;
-            transform-origin: center;
-            pointer-events: none;
-            z-index: 15;
-        }
-
-        #instruction {
-            position: absolute;
-            bottom: 5%;
-            width: 100%;
-            text-align: center;
-            color: white;
-            font-size: 20px;
-            animation: blink 1.5s infinite;
-            pointer-events: none;
-            text-shadow: 2px 2px 4px #000;
-            z-index: 10;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
     </style>
 </head>
 <body>
 
-<div id="game-container">
-    <div id="overlay"></div>
-    <div id="scoreboard">
-        홈런: <span id="hr-count">0</span><br>
-        스트라이크: <span id="strike-count" style="color: #FF6347;">0</span> / 3
+    <div class="game-card">
+        <h1>오빠 카드 찬스! 💳</h1>
+        <p class="desc">야자하느라 고생하는 고딩!<br>타이밍 맞춰서 오빠 지갑을 털어봐 😎</p>
+
+        <div class="gauge-container">
+            <div class="silver-zone"></div>
+            <div class="golden-zone"></div>
+            <div class="cursor" id="cursor"></div>
+        </div>
+
+        <button class="stop-btn" id="action-btn" onclick="stopCursor()">여기다! 멈춰!</button>
+
+        <div id="result-box">
+            <div id="result-title">결과</div>
+            <div id="result-msg">메시지</div>
+            <button class="reset-btn" onclick="resetGame()">다시 도전 ㅋ</button>
+        </div>
     </div>
-    <div id="sweet-spot"></div>
-    <div id="ball"></div>
-    <div id="message-board">HOME RUN!</div>
-    <div id="instruction">화면을 클릭하여 투구 시작!</div>
-</div>
 
-<script>
-    // --- 사운드 에셋 ---
-    const sfxBatHit = new Audio('https://actions.google.com/sounds/v1/sports/baseball_bat_hit.ogg');
-    const sfxCheer = new Audio('https://actions.google.com/sounds/v1/crowds/crowd_cheer.ogg');
-    const sfxMiss = new Audio('https://actions.google.com/sounds/v1/weapons/swish_and_miss.ogg');
-    const sfxUmpire = new Audio('https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg'); 
+    <script>
+        const cursor = document.getElementById('cursor');
+        const actionBtn = document.getElementById('action-btn');
+        const resultBox = document.getElementById('result-box');
+        const resultTitle = document.getElementById('result-title');
+        const resultMsg = document.getElementById('result-msg');
 
-    // --- DOM 요소 ---
-    const container = document.getElementById('game-container');
-    const ballEl = document.getElementById('ball');
-    const msgBoard = document.getElementById('message-board');
-    const hrCountEl = document.getElementById('hr-count');
-    const strikeCountEl = document.getElementById('strike-count');
-    const instruction = document.getElementById('instruction');
+        let position = 0;
+        let direction = 1;
+        let speed = 2.5; // 속도 (숫자가 클수록 빠름)
+        let animationId;
+        let isRunning = true;
 
-    // --- 게임 상태 변수 ---
-    let state = 'READY'; // READY, PITCHING, HIT
-    let animationId;
-    let homerunCount = 0;
-    let strikeCount = 0;
+        function moveCursor() {
+            if (!isRunning) return;
 
-    // 공 물리 변수
-    const containerHeight = 800;
-    const containerWidth = 500;
-    let ball = {
-        x: containerWidth / 2,
-        y: containerHeight * 0.2,
-        scale: 0.2,
-        dx: 0,
-        dy: 0,
-        speedY: 12 // 날아오는 속도 (조금 더 빠르게 조정)
-    };
-
-    // 타격 존 설정
-    const hitZoneTop = containerHeight * 0.75;
-    const hitZoneBottom = containerHeight * 0.85;
-
-    // 화면 클릭/터치 이벤트
-    container.addEventListener('mousedown', handleInteraction);
-    container.addEventListener('touchstart', (e) => {
-        e.preventDefault(); 
-        handleInteraction();
-    });
-
-    function handleInteraction() {
-        if (state === 'READY') {
-            startPitching();
-        } else if (state === 'PITCHING') {
-            swingBat();
-        }
-    }
-
-    function showMessage(text, color) {
-        msgBoard.textContent = text;
-        msgBoard.style.color = color;
-        msgBoard.style.opacity = 1;
-        setTimeout(() => { msgBoard.style.opacity = 0; }, 1500);
-    }
-
-    function updateScoreboard() {
-        hrCountEl.textContent = homerunCount;
-        strikeCountEl.textContent = strikeCount;
-
-        if (strikeCount >= 3) {
-            setTimeout(() => {
-                alert(`게임 오버! 총 ${homerunCount}개의 홈런을 쳤습니다! ⚾`);
-                homerunCount = 0;
-                strikeCount = 0;
-                updateScoreboard();
-                state = 'READY';
-                instruction.textContent = '화면을 클릭하여 다시 시작';
-                instruction.style.display = 'block';
-            }, 500);
-        }
-    }
-
-    // --- 게임 로직 ---
-    function startPitching() {
-        state = 'PITCHING';
-        instruction.style.display = 'none';
-        msgBoard.style.opacity = 0;
-
-        // 공 초기화
-        ball.x = containerWidth / 2;
-        ball.y = containerHeight * 0.2;
-        ball.scale = 0.2;
-        ball.dy = ball.speedY; 
-        ball.dx = 0;
-
-        ballEl.style.display = 'block';
-        updateBallStyle();
-
-        cancelAnimationFrame(animationId);
-        gameLoop();
-    }
-
-    function swingBat() {
-        // 타격 타이밍 판별 (Sweet Spot 안에 들어왔을 때)
-        if (ball.y >= hitZoneTop && ball.y <= hitZoneBottom) {
-            state = 'HIT';
-            homerunCount++;
-            showMessage('HOME RUN!', '#FFD700');
-
-            sfxBatHit.currentTime = 0;
-            sfxBatHit.play();
-            sfxCheer.currentTime = 0;
-            sfxCheer.play();
-
-            // 랜덤 각도로 홈런 날아가기
-            const angleDeg = (Math.random() * 90) - 45;
-            const angleRad = angleDeg * (Math.PI / 180);
-            const hitSpeed = 25; 
+            position += direction * speed;
             
-            ball.dx = Math.sin(angleRad) * hitSpeed;
-            ball.dy = -Math.cos(angleRad) * hitSpeed; 
-
-            updateScoreboard();
-        } else {
-            processStrike();
-        }
-    }
-
-    function processStrike() {
-        state = 'READY';
-        strikeCount++;
-        showMessage('STRIKE!', '#FF6347');
-
-        sfxMiss.currentTime = 0;
-        sfxMiss.play();
-        setTimeout(() => { sfxUmpire.currentTime = 0; sfxUmpire.play(); }, 300);
-
-        ballEl.style.display = 'none';
-        
-        if (strikeCount < 3) {
-            instruction.style.display = 'block';
-            instruction.textContent = '화면을 클릭하여 다음 투구';
-        }
-        updateScoreboard();
-    }
-
-    function gameLoop() {
-        if (state === 'PITCHING') {
-            ball.y += ball.dy;
-            // 공이 다가올수록 커지는 원근감 효과
-            ball.scale = 0.2 + ((ball.y - containerHeight * 0.2) / (containerHeight * 0.6)) * 1.3;
-
-            // 스윙 안 하고 존을 지나치면 스트라이크 처리
-            if (ball.y > containerHeight) {
-                processStrike();
-                return;
+            // 양끝에 닿으면 방향 전환
+            if (position >= 96 || position <= 0) {
+                direction *= -1;
             }
-        } else if (state === 'HIT') {
-            ball.x += ball.dx;
-            ball.y += ball.dy;
-            // 멀어지므로 다시 작아짐
-            ball.scale -= 0.05;
-            if (ball.scale < 0.1) ball.scale = 0.1;
 
-            // 화면 밖으로 공이 완전히 나가면 다음 턴 준비
-            if (ball.y < -100 || ball.x < -100 || ball.x > containerWidth + 100) {
-                state = 'READY';
-                ballEl.style.display = 'none';
-                instruction.style.display = 'block';
-                instruction.textContent = '화면을 클릭하여 다음 투구';
-                return; 
+            cursor.style.left = position + '%';
+            animationId = requestAnimationFrame(moveCursor);
+        }
+
+        // 게임 시작
+        moveCursor();
+
+        function stopCursor() {
+            if (!isRunning) return;
+            
+            isRunning = false;
+            cancelAnimationFrame(animationId);
+            actionBtn.style.display = 'none';
+
+            // 결과 판정 (가운데 40~60%가 대박존, 20~80%가 중박존)
+            if (position >= 40 && position <= 60) {
+                resultTitle.innerText = "🎉 대박 당첨!!";
+                resultTitle.style.color = "#ff6b6b";
+                resultMsg.innerHTML = "오? 타이밍 미쳤고 ㅋㅋㅋ<br>마라탕에 탕후루 풀코스로 쏜다!!<br>먹고 싶은 거 톡으로 보내라 🥰";
+            } else if (position >= 20 && position <= 80) {
+                resultTitle.innerText = "✨ 평타 쳤다!";
+                resultTitle.style.color = "#4facfe";
+                resultMsg.innerHTML = "까비~ 그래도 이 정도면 봐준다.<br>편의점 가서 떡볶이랑 과자 골라라!<br>야자 파이팅하고 💪";
+            } else {
+                resultTitle.innerText = "💥 꽝 ㅋㅋㅋㅋ";
+                resultTitle.style.color = "#5f2c82";
+                resultMsg.innerHTML = "아이고 느려 터졌네 ㅋㅋㅋ 으이구!<br>오빠 지갑은 안전하다 휴~<br>...는 장난이고 아이스크림은 사줄게 🍦";
             }
+
+            resultBox.style.display = 'block';
         }
 
-        updateBallStyle();
-
-        if (state !== 'READY') {
-            animationId = requestAnimationFrame(gameLoop);
+        function resetGame() {
+            isRunning = true;
+            resultBox.style.display = 'none';
+            actionBtn.style.display = 'inline-block';
+            position = 0;
+            direction = 1;
+            // 다시 할 때마다 아주 살짝씩 빨라지게 장난치기
+            speed = Math.min(speed + 0.5, 6); 
+            moveCursor();
         }
-    }
-
-    function updateBallStyle() {
-        ballEl.style.left = `${ball.x - 20}px`;
-        ballEl.style.top = `${ball.y - 20}px`;
-        ballEl.style.transform = `scale(${ball.scale})`;
-    }
-</script>
+    </script>
 </body>
 </html>
